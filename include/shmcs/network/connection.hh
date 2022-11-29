@@ -1,12 +1,12 @@
-#ifndef SHMCS_CONNECTION_HH
-#define SHMCS_CONNECTION_HH
+#ifndef SHMCS_NETWORK_CONNECTION_HH
+#define SHMCS_NETWORK_CONNECTION_HH
 
 #include "shm.pb.h"
 #include "shmcs/types.hh"
 
 namespace shmcs {
 
-size_t max_message_size = 4096;
+const auto max_message_size = 4096;
 
 /**
  * Shared Memory Buffer connection abstraction
@@ -29,4 +29,4 @@ class Connection {
 
 } // namespace shmcs
 
-#endif // SHMCS_CONNECTION_HH
+#endif // SHMCS_NETWORK_CONNECTION_HH

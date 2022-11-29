@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(shm-client-server LANGUAGES CXX)
+project(shmcs LANGUAGES CXX)
 
 # set compile flags
 set(CMAKE_CXX_STANDARD 20)
@@ -20,9 +20,12 @@ add_library(shmcs
         include/shmcs/handler/handler.hh
         include/shmcs/handler/server.hh
         include/shmcs/network/connection.hh
+        include/shmcs/network/server.hh
+        include/shmcs/spmc.hh
         include/shmcs/types.hh
         lib/handler/server.cc
-        lib/connection.cc
+        lib/network/server.cc
+        lib/network/connection.cc
         ${PROTO_SRC}
         ${PROTO_HDR})
 

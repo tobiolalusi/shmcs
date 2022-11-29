@@ -1,12 +1,14 @@
-#ifndef SHMCS_SERVER_HH
-#define SHMCS_SERVER_HH
+#ifndef SHMCS_HANDLER_SERVER_HH
+#define SHMCS_HANDLER_SERVER_HH
 
 #include "shmcs/handler/handler.hh"
 
 namespace shmcs {
 
-class ServerHandler : Handler {
+class ServerHandler : public Handler {
   public:
+  explicit ServerHandler(shm_bucket_t buckets) : buckets{buckets} {};
+
   auto handle_connection(Connection& con) -> void override;
 
   private:
@@ -18,8 +20,10 @@ class ServerHandler : Handler {
 
   /// deletes a key from a bucket
   auto handle_delete(Connection& con, Message& msg) -> void;
+
+  size_t buckets;
 };
 
 } // namespace shmcs
 
-#endif // SHMCS_SERVER_HH
+#endif // SHMCS_HANDLER_SERVER_HH
