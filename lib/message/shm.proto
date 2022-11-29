@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package shmcs;
+
+message Message {
+  enum Type {
+    REQUEST = 0;
+    RESPONSE = 1;
+  }
+
+  enum Operation {
+    INSERT = 0;
+    READ = 1;
+    DELETE = 2;
+  }
+
+  // request type and operation
+  Type type = 1;
+  Operation operation = 2;
+
+  // response status and message
+  bool success = 3;
+  string message = 4;
+
+  // operation payload
+  uint32 bucket = 5;
+  repeated uint32 key = 6;
+}
