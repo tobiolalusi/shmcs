@@ -1,7 +1,7 @@
 #ifndef SHMCS_HANDLER_HH
 #define SHMCS_HANDLER_HH
 
-#include "shmcs/connection.hh"
+#include "shmcs/network/connection.hh"
 
 namespace shmcs {
 

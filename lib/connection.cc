@@ -1,6 +1,6 @@
 #include <netdb.h>
 
-#include "shmcs/connection.hh"
+#include "shmcs/network/connection.hh"
 
 namespace shmcs {
 

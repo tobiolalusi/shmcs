@@ -17,11 +17,11 @@ find_package(fmt REQUIRED)
 protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROJECT_SOURCE_DIR}/lib/message/shm.proto)
 
 add_library(shmcs
-        include/shmcs/connection.hh
-        include/shmcs/handler.hh
-        include/shmcs/server.hh
+        include/shmcs/handler/handler.hh
+        include/shmcs/handler/server.hh
+        include/shmcs/network/connection.hh
         include/shmcs/types.hh
-        lib/server.cc
+        lib/handler/server.cc
         lib/connection.cc
         ${PROTO_SRC}
         ${PROTO_HDR})

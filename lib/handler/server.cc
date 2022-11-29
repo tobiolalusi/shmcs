@@ -1,8 +1,8 @@
-#include "shmcs/server.hh"
+#include "shmcs/handler/server.hh"
 
 namespace shmcs {
 
-auto Server::handle_connection(shmcs::Connection& con) -> void {
+auto ServerHandler::handle_connection(shmcs::Connection& con) -> void {
   Message request{}, response{};
 
   if (!con.receive(request)) return;
@@ -44,7 +44,7 @@ auto Server::handle_connection(shmcs::Connection& con) -> void {
   }
 }
 
-auto Server::handle_insert(shmcs::Connection& con, shmcs::Message& msg) -> void {
+auto ServerHandler::handle_insert(shmcs::Connection& con, shmcs::Message& msg) -> void {
   Message response{};
   response.set_type(Message_Type_RESPONSE);
   response.set_operation(msg.operation());
@@ -56,7 +56,7 @@ auto Server::handle_insert(shmcs::Connection& con, shmcs::Message& msg) -> void 
   con.send(response);
 }
 
-auto Server::handle_read(shmcs::Connection& con, shmcs::Message& msg) -> void {
+auto ServerHandler::handle_read(shmcs::Connection& con, shmcs::Message& msg) -> void {
   Message response{};
   response.set_type(Message_Type_RESPONSE);
   response.set_operation(msg.operation());
@@ -68,7 +68,7 @@ auto Server::handle_read(shmcs::Connection& con, shmcs::Message& msg) -> void {
   con.send(response);
 }
 
-auto Server::handle_delete(shmcs::Connection& con, shmcs::Message& msg) -> void {
+auto ServerHandler::handle_delete(shmcs::Connection& con, shmcs::Message& msg) -> void {
   Message response{};
   response.set_type(Message_Type_RESPONSE);
   response.set_operation(msg.operation());

@@ -1,11 +1,11 @@
 #ifndef SHMCS_SERVER_HH
 #define SHMCS_SERVER_HH
 
-#include "shmcs/handler.hh"
+#include "shmcs/handler/handler.hh"
 
 namespace shmcs {
 
-class Server : Handler {
+class ServerHandler : Handler {
   public:
   auto handle_connection(Connection& con) -> void override;
 
