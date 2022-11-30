@@ -1,10 +1,17 @@
 #include "shmcs/network/server.hh"
+#include "shmcs/linkedlist.hh"
 
 using namespace shmcs;
 
 auto main(int argc, char** argv) -> int {
   size_t buckets;
   shm_name_t shm_name;
+
+  auto x = LinkedList<int>{};
+  x.append(12);
+  x.append(24);
+  x.append(36);
+  x.append(42);
 
   if (argc < 3) {
     fmt::print("Usage: {} [NAME] [BUCKETS]\n"

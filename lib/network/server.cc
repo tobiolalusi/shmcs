@@ -16,6 +16,7 @@ auto Server::run() -> std::thread {
 
 auto Server::dispatcher(shmcs::shm_name_t& shm_name, SPMCQueue<void*>& fd_queue)
     -> void {
+  // initialize hash table
   while (true);
 }
 
