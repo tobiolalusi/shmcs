@@ -25,8 +25,7 @@ add_library(${LIBRARY_NAME}
         include/shmcs/handler/server.hh
         include/shmcs/network/connection.hh
         include/shmcs/network/server.hh
-        include/shmcs/hashtable.hh
-        include/shmcs/linkedlist.hh
+        include/shmcs/chained-hashtable.hh
         include/shmcs/spmc.hh
         include/shmcs/types.hh
         lib/handler/server.cc
@@ -54,14 +53,15 @@ target_link_libraries(${SERVER_EXECUTABLE_NAME} ${LIBRARY_NAME})
 set(UNIT_TESTS_EXECUTABLE_NAME unit-tests)
 set(UNIT_TESTS_SOURCES
         tests/unit/unit-tests.cc
-        tests/unit/hashtable-test.cc
-        tests/unit/linkedlist-test.cc)
+        tests/unit/chained-hashtable-test.cc)
 
 find_package(doctest REQUIRED)
 include(doctest)
 
 add_executable(${UNIT_TESTS_EXECUTABLE_NAME} ${UNIT_TESTS_SOURCES})
-target_link_libraries(${UNIT_TESTS_EXECUTABLE_NAME} PRIVATE doctest::doctest)
+target_link_libraries(${UNIT_TESTS_EXECUTABLE_NAME}
+        PRIVATE doctest::doctest
+        PRIVATE shmcs)
 
 # debug prints
 if (NOT DEFINED DEBUG)
