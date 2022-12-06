@@ -2,6 +2,11 @@
 
 namespace shmcs {
 
+// TODO: update hash function
+auto hashfn(shm_key_t key) -> shm_bucket_t { return key; }
+
+ServerHandler::ServerHandler(size_t buckets) : hashtable{hashfn, buckets} {}
+
 auto ServerHandler::handle_connection(shmcs::Connection& con) -> void {
   Message request{}, response{};
 
@@ -14,7 +19,7 @@ auto ServerHandler::handle_connection(shmcs::Connection& con) -> void {
   switch (request.operation()) {
     case Message_Operation_INSERT:
 #ifdef DEBUG
-    fmt::print("[DEBUG]: Received INSERT request\n");
+      fmt::print("[DEBUG]: Received INSERT request\n");
 #endif
       handle_insert(con, request);
       break;
@@ -44,7 +49,8 @@ auto ServerHandler::handle_connection(shmcs::Connection& con) -> void {
   }
 }
 
-auto ServerHandler::handle_insert(shmcs::Connection& con, shmcs::Message& msg) -> void {
+auto ServerHandler::handle_insert(shmcs::Connection& con, shmcs::Message& msg)
+    -> void {
   Message response{};
   response.set_type(Message_Type_RESPONSE);
   response.set_operation(msg.operation());
@@ -56,7 +62,8 @@ auto ServerHandler::handle_insert(shmcs::Connection& con, shmcs::Message& msg) -
   con.send(response);
 }
 
-auto ServerHandler::handle_read(shmcs::Connection& con, shmcs::Message& msg) -> void {
+auto ServerHandler::handle_read(shmcs::Connection& con, shmcs::Message& msg)
+    -> void {
   Message response{};
   response.set_type(Message_Type_RESPONSE);
   response.set_operation(msg.operation());
@@ -68,7 +75,8 @@ auto ServerHandler::handle_read(shmcs::Connection& con, shmcs::Message& msg) -> 
   con.send(response);
 }
 
-auto ServerHandler::handle_delete(shmcs::Connection& con, shmcs::Message& msg) -> void {
+auto ServerHandler::handle_delete(shmcs::Connection& con, shmcs::Message& msg)
+    -> void {
   Message response{};
   response.set_type(Message_Type_RESPONSE);
   response.set_operation(msg.operation());
@@ -80,4 +88,4 @@ auto ServerHandler::handle_delete(shmcs::Connection& con, shmcs::Message& msg) -
   con.send(response);
 }
 
-}
+} // namespace shmcs

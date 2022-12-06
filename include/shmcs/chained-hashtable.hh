@@ -6,6 +6,8 @@
 #include <functional>
 #include <memory>
 
+#include "shmcs/types.hh"
+
 namespace shmcs {
 
 struct bucket_not_found : std::runtime_error {
@@ -21,7 +23,8 @@ class ChainedHashTable {
   public:
   /// creates a chained hash table of a specified `size`, distributed
   /// with a hash function `hashfn`
-  explicit ChainedHashTable(const std::function<size_t(K)> hashfn, size_t size)
+  explicit ChainedHashTable(const std::function<shm_bucket_t(K)> hashfn,
+                            size_t size)
       : hashfn{hashfn}, size{size},
         buckets{std::make_unique<std::forward_list<K>[]>(size)} {}
 

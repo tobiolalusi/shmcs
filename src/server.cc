@@ -1,34 +1,33 @@
 #include "shmcs/network/server.hh"
-#include "shmcs/linkedlist.hh"
 
 using namespace shmcs;
 
 auto main(int argc, char** argv) -> int {
-  size_t buckets;
-  shm_name_t shm_name;
-
-  auto x = LinkedList<int>{};
-  x.append(12);
-  x.append(24);
-  x.append(36);
-  x.append(42);
-
   if (argc < 3) {
-    fmt::print("Usage: {} [NAME] [BUCKETS]\n"
-               "Starts the shared memory (shm) server at [NAME] with [BUCKETS] "
+    fmt::print("Usage: {} [PATH] [BUCKETS]\n"
+               "Starts the shared memory (shm) server at [PATH] with [BUCKETS] "
                "number of buckets\n"
-               "--\nCreated by Oluwatobiloba Olalusi\n",
+               "--\n"
+               "Created by Oluwatobiloba Olalusi\n",
                argv[0]);
     return EXIT_FAILURE;
   }
 
   char* endptr;
-  buckets = strtol(argv[2], &endptr, 10);
+  const size_t buckets = strtol(argv[2], &endptr, 10);
   if (endptr == argv[2]) return EXIT_FAILURE;
-  shm_name = argv[1];
+  shm_path_t shm_path = argv[1];
+
+  if (shm_path[0] != '/') {
+    throw std::runtime_error("[PATH] should start with a forward slash \"/\"");
+  }
+
+  if (strlen(shm_path) > NAME_MAX) {
+    throw std::runtime_error("[PATH] cannot have more than 255 characters");
+  }
 
   auto handler = ServerHandler{buckets};
-  auto server = Server(shm_name, handler);
+  auto server = Server(shm_path, handler);
   auto server_thread = server.run();
 
   fmt::print("SHM server up and running...\n");

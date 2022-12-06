@@ -2,12 +2,13 @@
 #define SHMCS_HANDLER_SERVER_HH
 
 #include "shmcs/handler/handler.hh"
+#include "shmcs/chained-hashtable.hh"
 
 namespace shmcs {
 
 class ServerHandler : public Handler {
   public:
-  explicit ServerHandler(shm_bucket_t buckets) : buckets{buckets} {};
+  explicit ServerHandler(size_t buckets);
 
   auto handle_connection(Connection& con) -> void override;
 
@@ -21,7 +22,7 @@ class ServerHandler : public Handler {
   /// deletes a key from a bucket
   auto handle_delete(Connection& con, Message& msg) -> void;
 
-  size_t buckets;
+  ChainedHashTable<shm_key_t> hashtable;
 };
 
 } // namespace shmcs

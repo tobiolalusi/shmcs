@@ -3,10 +3,11 @@
 #include "shmcs/chained-hashtable.hh"
 #include <iostream>
 
+auto simple_hashfn(shmcs::shm_key_t k) -> shmcs::shm_bucket_t { return k; }
+
 TEST_SUITE("Chained hash table") {
   TEST_CASE("key insertion and bucket reading") {
-    auto hashtable = shmcs::ChainedHashTable<uint32_t>{
-        [](uint32_t k) -> size_t { return k; }, 3};
+    auto hashtable = shmcs::ChainedHashTable<uint32_t>{simple_hashfn, 3};
     hashtable.insert(1);
     hashtable.insert(2);
     hashtable.insert(3);
@@ -18,8 +19,7 @@ TEST_SUITE("Chained hash table") {
   }
 
   TEST_CASE("key insertion and key removal") {
-    auto hashtable = shmcs::ChainedHashTable<uint32_t>{
-        [](uint32_t k) -> size_t { return k; }, 3};
+    auto hashtable = shmcs::ChainedHashTable<uint32_t>{simple_hashfn, 3};
     hashtable.insert(0);
     hashtable.insert(1);
     hashtable.insert(1);

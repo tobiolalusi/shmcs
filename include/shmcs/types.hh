@@ -7,9 +7,10 @@
 namespace shmcs {
 
 /// represents the name of the shared memory buffer
-using shm_name_t = std::string;
+using shm_path_t = const char*;
 
 /// represents a key that would be operated on
+// TODO: convert to string
 using shm_key_t = uint32_t;
 
 /// represents the size of a single bucket
