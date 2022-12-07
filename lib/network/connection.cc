@@ -1,8 +1,27 @@
+#include <fcntl.h>
 #include <netdb.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 
 #include "shmcs/network/connection.hh"
 
 namespace shmcs {
+
+Connection::Connection(shm_path_t& shm_path) {
+  fd = shm_open(shm_path, O_RDWR, SHM_PERMISSIONS);
+  if (!fd) {
+    throw std::runtime_error(fmt::format("Failed to open {}", shm_path));
+  }
+  memptr = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  if (memptr == MAP_FAILED) {
+    throw std::runtime_error("Failed to map shared memory");
+  }
+  close(fd);
+}
+
+Connection::~Connection() {
+  munmap(memptr, SHM_SIZE);
+}
 
 auto Connection::receive(shmcs::Message& msg) const -> bool {
   // read message size
@@ -37,7 +56,7 @@ auto Connection::receive(shmcs::Message& msg) const -> bool {
   return read_bytes == size;
 }
 
-auto Connection::send(shmcs::Message& msg) const -> bool {
+auto Connection::send(const shmcs::Message& msg) const -> bool {
   uint32_t size = msg.ByteSizeLong();
   auto buffer = std::make_unique<uint8_t[]>(size + 4);
 

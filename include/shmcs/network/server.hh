@@ -13,7 +13,6 @@ namespace shmcs {
 class Server {
   public:
   static const auto NUM_WORKERS = 4;
-  static const auto SHM_SIZE = 4096; // 4KiB
 
   Server(shm_path_t shm_path, ServerHandler& handler)
       : shm_path{shm_path}, handler{handler} {}

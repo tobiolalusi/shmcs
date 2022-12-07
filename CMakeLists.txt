@@ -28,6 +28,7 @@ add_library(${LIBRARY_NAME}
         include/shmcs/chained-hashtable.hh
         include/shmcs/spmc.hh
         include/shmcs/types.hh
+        include/shmcs/utils.hh
         lib/handler/server.cc
         lib/network/server.cc
         lib/network/connection.cc
@@ -48,6 +49,10 @@ target_link_libraries(shmcs
 # server executable
 add_executable(${SERVER_EXECUTABLE_NAME} src/server.cc)
 target_link_libraries(${SERVER_EXECUTABLE_NAME} ${LIBRARY_NAME})
+
+# client executable
+add_executable(${CLIENT_EXECUTABLE_NAME} src/client.cc)
+target_link_libraries(${CLIENT_EXECUTABLE_NAME} ${LIBRARY_NAME})
 
 # testing
 set(UNIT_TESTS_EXECUTABLE_NAME unit-tests)

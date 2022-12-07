@@ -13,19 +13,21 @@ auto main(int argc, char** argv) -> int {
     return EXIT_FAILURE;
   }
 
-  char* endptr;
-  const size_t buckets = strtol(argv[2], &endptr, 10);
-  if (endptr == argv[2]) return EXIT_FAILURE;
+  // [PATH] assignment and handling
   shm_path_t shm_path = argv[1];
-
   if (shm_path[0] != '/') {
     throw std::runtime_error("[PATH] should start with a forward slash \"/\"");
   }
-
   if (strlen(shm_path) > NAME_MAX) {
     throw std::runtime_error("[PATH] cannot have more than 255 characters");
   }
 
+  // [BUCKETS] assignment
+  char* endptr;
+  size_t buckets = strtol(argv[2], &endptr, 10);
+  if (endptr == argv[2]) return EXIT_FAILURE;
+
+  // server setup
   auto handler = ServerHandler{buckets};
   auto server = Server(shm_path, handler);
   auto server_thread = server.run();
