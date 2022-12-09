@@ -12,10 +12,8 @@ namespace shmcs {
 
 class Server {
   public:
-  static const auto NUM_WORKERS = 4;
-
-  Server(shm_path_t shm_path, ServerHandler& handler)
-      : shm_path{shm_path}, handler{handler} {}
+  Server(shm_name_t name, ServerHandler& handler)
+      : name{name}, handler{handler} {}
 
   /// unique server
   Server(const Server&) = delete;
@@ -24,8 +22,14 @@ class Server {
   Server& operator=(const Server&&) = delete;
 
   ~Server() {
-    shm_unlink(shm_path); // TODO: confirm this behaviour
-    for (auto& worker : workers) { worker.join(); }
+    shm_unlink(name);
+    // TODO: create utility function for this
+    auto shm_sem_r_name = std::string(name).append("-r").c_str();
+    sem_unlink(shm_sem_r_name);
+    auto shm_sem_w_name = std::string(name).append("-w").c_str();
+    sem_unlink(shm_sem_w_name);
+    auto shm_sem_s_name = std::string(name).append("-s").c_str();
+    sem_unlink(shm_sem_s_name);
   }
 
   /// spawn dispatcher and worker threads
@@ -33,17 +37,10 @@ class Server {
 
   private:
   /// dispatcher thread routine for listening for incoming connections
-  /// and dispatching requests to worker threads
-  static auto dispatcher(shm_path_t& shm_path, SPMCQueue<void*>& fd_queue)
+  [[noreturn]] static auto dispatcher(shm_name_t& name, ServerHandler& handler)
       -> void;
 
-  /// worker thread routine for handling requests
-  static auto worker(ServerHandler& handler, SPMCQueue<void*>& fd_queue)
-      -> void;
-
-  shm_path_t shm_path;
-  std::array<std::thread, NUM_WORKERS> workers;
-  SPMCQueue<void*> fd_queue;
+  shm_name_t name;
   ServerHandler& handler;
 };
 

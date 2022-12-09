@@ -1,15 +1,16 @@
 #include "shmcs/network/connection.hh"
-#include "shmcs/utils.hh"
 
 using namespace shmcs;
 
 auto main(int argc, char** argv) -> int {
-  if (argc < 3) {
-    fmt::print("Usage: {} [PATH] [OPERATION] [KEY|BUCKET]\n"
+  if (argc < 4) {
+    fmt::print("Usage: {} [SHM_NAME] [OPERATION] [ARGS...]\n"
                "Client to send operations to execute on the server\n"
-               "[OPERATION] with [KEY|BUCKET] may be combined as follows:\n"
-               "\tinsert [KEY]: inserts key into the hashtable\n"
-               "\tdelete [KEY]: removes key from the hashtable\n"
+               "[SHM_NAME] represents the name of the shared memory of the\n"
+               "\tserver the client is connecting to\n"
+               "[OPERATION] with [ARGS...] may be combined as follows:\n"
+               "\tinsert [KEY...]: insert keys into the hashtable\n"
+               "\tdelete [KEY...]: remove keys from the hashtable\n"
                "\tread [BUCKET]: reads all the keys in the bucket\n"
                "--\n"
                "Created by Oluwatobiloba Olalusi\n",
@@ -17,58 +18,63 @@ auto main(int argc, char** argv) -> int {
     return EXIT_FAILURE;
   }
 
-  // [PATH] assignment and handling
-  shm_path_t shm_path = argv[1];
-  if (shm_path[0] != '/') {
-    throw std::runtime_error("[PATH] should start with a forward slash \"/\"");
-  }
-  if (strlen(shm_path) > NAME_MAX) {
-    throw std::runtime_error("[PATH] cannot have more than 255 characters");
-  }
+  shm_name_t send_path = argv[1];      // [SEND_PATH]
+  std::string operation = argv[2];     // [OPERATION]
+  std::string operation_arg = argv[3]; // [ARGS...]
 
-  // [OPERATION] assignment
-  Message::Operation operation;
-  if (strcmp(argv[2], "insert") == 0) {
-    operation = shmcs::Message_Operation_INSERT;
-  } else if (strcmp(argv[2], "delete") == 0) {
-    operation = shmcs::Message_Operation_DELETE;
-  } else if (strcmp(argv[2], "read") == 0) {
-    operation = shmcs::Message_Operation_READ;
+  // setup requests to server
+  Message request{}, response{};
+  request.set_type(Message_Type_REQUEST);
+  if (operation == "insert") {
+    request.set_operation(Message_Operation_INSERT);
+    for (int i = 3; i < argc; ++i) {
+      auto* tmp = request.add_kbp();
+      tmp->set_key(argv[i]);
+    }
+  } else if (operation == "delete") {
+    request.set_operation(Message_Operation_DELETE);
+    for (int i = 3; i < argc; ++i) {
+      auto* tmp = request.add_kbp();
+      tmp->set_key(argv[i]);
+    }
+  } else if (operation == "read") {
+    request.set_operation(Message_Operation_READ);
+    shm_bucket_t bucket = std::stol(operation_arg);
+    auto* tmp = request.add_kbp();
+    tmp->set_bucket(bucket);
   } else {
     throw std::runtime_error("Unknown [OPERATION]");
   }
 
-  // setup requests to server
-  Message request{};
-  request.set_type(shmcs::Message_Type_REQUEST);
-  request.set_operation(operation);
-
-  switch (operation) {
-    case shmcs::Message_Operation_INSERT:
-    case shmcs::Message_Operation_DELETE:
-      request.add_key(argv[3]);
-      break;
-    case shmcs::Message_Operation_READ: {
-      shm_bucket_t bucket = shmcs::toLong(argv[3]);
-      request.set_bucket(bucket);
-      break;
-    }
-  }
-
-  // establish connection
-  Connection conn{shm_path};
-
-  // send request
+  // establish connection to server for sending
+  Connection conn{send_path};
   conn.send(request);
-
-  // receive response
-  Message response{};
   conn.receive(response);
 
   if (!response.success()) {
-    fmt::print("OPERATION FAILED:\n");
+    fmt::print("OPERATION FAILED: {}\n", response.message());
   }
-  fmt::print("{}\n", response.message());
+
+  if (response.operation() == Message_Operation_INSERT) {
+    fmt::print("Inserted keys into hashtable:\n");
+    for (const auto& kbp : response.kbp()) {
+      fmt::print("\t[{}] {}\n", kbp.bucket(), kbp.key());
+    }
+  } else if (response.operation() == Message_Operation_READ) {
+    fmt::print("Read keys from bucket {}:\n", argv[3]);
+    for (const auto& kbp : response.kbp()) {
+      fmt::print("\t[{}] {}\n", kbp.bucket(), kbp.key());
+    }
+  } else if (response.operation() == Message_Operation_DELETE) {
+    fmt::print("Deleted keys from hashtable:\n");
+    for (const auto& kbp : response.kbp()) {
+      if (kbp.bucket() == static_cast<uint32_t>(-1)) {
+        fmt::print("\t[*] {} [NON-EXISTENT]\n", kbp.key());
+      } else {
+        fmt::print("\t[{}] {} [DELETED]\n", kbp.bucket(), kbp.key());
+      }
+    }
+  }
 
   return EXIT_SUCCESS;
 }

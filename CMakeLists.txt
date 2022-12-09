@@ -26,9 +26,7 @@ add_library(${LIBRARY_NAME}
         include/shmcs/network/connection.hh
         include/shmcs/network/server.hh
         include/shmcs/chained-hashtable.hh
-        include/shmcs/spmc.hh
         include/shmcs/types.hh
-        include/shmcs/utils.hh
         lib/handler/server.cc
         lib/network/server.cc
         lib/network/connection.cc

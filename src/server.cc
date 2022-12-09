@@ -2,30 +2,21 @@
 
 using namespace shmcs;
 
+// TODO: listen to termination signal and safely destruct server
+
 auto main(int argc, char** argv) -> int {
   if (argc < 3) {
-    fmt::print("Usage: {} [PATH] [BUCKETS]\n"
-               "Starts the shared memory (shm) server at [PATH] with [BUCKETS] "
-               "number of buckets\n"
-               "--\n"
-               "Created by Oluwatobiloba Olalusi\n",
-               argv[0]);
+    fmt::print(
+        "Usage: {} [PATH] [BUCKETS]\n"
+        "Starts the shared memory server at [PATH] with [BUCKETS] buckets\n"
+        "--\n"
+        "Created by Oluwatobiloba Olalusi\n",
+        argv[0]);
     return EXIT_FAILURE;
   }
 
-  // [PATH] assignment and handling
-  shm_path_t shm_path = argv[1];
-  if (shm_path[0] != '/') {
-    throw std::runtime_error("[PATH] should start with a forward slash \"/\"");
-  }
-  if (strlen(shm_path) > NAME_MAX) {
-    throw std::runtime_error("[PATH] cannot have more than 255 characters");
-  }
-
-  // [BUCKETS] assignment
-  char* endptr;
-  size_t buckets = strtol(argv[2], &endptr, 10);
-  if (endptr == argv[2]) return EXIT_FAILURE;
+  shm_name_t shm_path = argv[1];       // [PATH]
+  size_t buckets = std::stol(argv[2]); // [BUCKETS]
 
   // server setup
   auto handler = ServerHandler{buckets};
