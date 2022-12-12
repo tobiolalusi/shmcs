@@ -6,7 +6,6 @@
 #include <utility>
 
 #include "shmcs/handler/server.hh"
-#include "shmcs/spmc.hh"
 
 namespace shmcs {
 

@@ -56,7 +56,7 @@ class ChainedHashTable {
   auto remove(K k) -> size_t {
     auto b = bucket_idx(k);
     std::forward_list<K>* bucket = buckets.get() + b;
-    if (bucket->remove(k) == 1) return b;
+    if (bucket->remove(k) > 0) return b;
     throw key_not_found{fmt::format("Key \"{}\" not found!", k)};
   }
 
