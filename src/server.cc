@@ -1,8 +1,7 @@
 #include "shmcs/network/server.hh"
+#include <csignal>
 
 using namespace shmcs;
-
-// TODO: listen to termination signal and safely destruct server
 
 auto main(int argc, char** argv) -> int {
   if (argc < 3) {

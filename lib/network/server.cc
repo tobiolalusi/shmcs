@@ -35,7 +35,8 @@ auto Server::dispatcher(shmcs::shm_name_t& name, ServerHandler& handler)
     -> void {
   // shared memory reading semaphore
   auto shm_sem_r_name = std::string(name).append("-r").c_str();
-  auto shm_sem_r = sem_open(shm_sem_r_name, O_CREAT | O_EXCL, SHM_PERMISSIONS, 0);
+  auto shm_sem_r =
+      sem_open(shm_sem_r_name, O_CREAT | O_EXCL, SHM_PERMISSIONS, 0);
   if (shm_sem_r == SEM_FAILED) {
     throw std::runtime_error(
         fmt::format("Failed to open shared memory reading semaphore: {}",
@@ -44,7 +45,8 @@ auto Server::dispatcher(shmcs::shm_name_t& name, ServerHandler& handler)
 
   // shared memory writing semaphore
   auto shm_sem_w_name = std::string(name).append("-w").c_str();
-  auto shm_sem_w = sem_open(shm_sem_w_name, O_CREAT | O_EXCL, SHM_PERMISSIONS, 1);
+  auto shm_sem_w =
+      sem_open(shm_sem_w_name, O_CREAT | O_EXCL, SHM_PERMISSIONS, 1);
   if (shm_sem_w == SEM_FAILED) {
     throw std::runtime_error(
         fmt::format("Failed to open shared memory writing semaphore: {}",
@@ -53,7 +55,8 @@ auto Server::dispatcher(shmcs::shm_name_t& name, ServerHandler& handler)
 
   // shared memory server operation semaphore
   auto shm_sem_s_name = std::string(name).append("-s").c_str();
-  auto shm_sem_s = sem_open(shm_sem_s_name, O_CREAT | O_EXCL, SHM_PERMISSIONS, 0);
+  auto shm_sem_s =
+      sem_open(shm_sem_s_name, O_CREAT | O_EXCL, SHM_PERMISSIONS, 0);
   if (shm_sem_s == SEM_FAILED) {
     throw std::runtime_error(fmt::format(
         "Failed to open shared memory server operation semaphore: {}",

@@ -1,8 +1,8 @@
 #ifndef SHMCS_HANDLER_SERVER_HH
 #define SHMCS_HANDLER_SERVER_HH
 
-#include "shmcs/handler/handler.hh"
 #include "shmcs/chained-hashtable.hh"
+#include "shmcs/handler/handler.hh"
 
 namespace shmcs {
 
