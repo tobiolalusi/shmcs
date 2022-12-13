@@ -68,6 +68,3 @@ multithreading could not be used. In a multithreaded environment, it is expected
 its job, it should send the response to the shared memory. This can be done, but the client that may read next
 from the shared memory might not be the target client for that response. The implementation here allows for the server
 to handle one request at a time, while the clients wait for access to the shared memory via semaphores.
-
----
-&copy; Oluwatobiloba Olalusi
