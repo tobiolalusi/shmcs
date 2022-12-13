@@ -64,9 +64,9 @@ class ChainedHashTable {
   /// calculates the index of the bucket key belongs to
   auto bucket_idx(K k) -> size_t { return hashfn(k) % size; }
 
+  std::function<size_t(K)> hashfn;
   size_t size;
   std::unique_ptr<std::forward_list<K>[]> buckets;
-  std::function<size_t(K)> hashfn;
 };
 
 } // namespace shmcs
