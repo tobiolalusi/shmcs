@@ -20,16 +20,6 @@ class Server {
   Server(Server&&) = delete;
   Server& operator=(const Server&&) = delete;
 
-  ~Server() {
-    shm_unlink(name);
-    auto shm_sem_r_name = std::string(name).append("-r").c_str();
-    sem_unlink(shm_sem_r_name);
-    auto shm_sem_w_name = std::string(name).append("-w").c_str();
-    sem_unlink(shm_sem_w_name);
-    auto shm_sem_s_name = std::string(name).append("-s").c_str();
-    sem_unlink(shm_sem_s_name);
-  }
-
   /// spawn dispatcher and worker threads
   auto run() -> std::thread;
 
